@@ -8,9 +8,7 @@
     "dev": "vite",
     "dev:server": "tsx watch server.ts",
     "dev:all": "concurrently \"npm run dev:server\" \"npm run dev\"",
-    "build": "vite build",
-    "build:server": "tsc server.ts --outDir dist",
-    "build:all": "npm run build && npm run build:server",
+    "build": "tsc && vite build",
     "start": "NODE_ENV=production node dist/server.js",
     "preview": "vite preview"
   },
