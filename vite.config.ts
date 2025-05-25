@@ -4,11 +4,10 @@ import path from "path";
 import tailwindcss from "tailwindcss";
 import autoprefixer from "autoprefixer";
 
-
 export default defineConfig({
   plugins: [
     react(),
-    
+    // cloudflare() // УДАЛЕНО для локальной сборки
   ],
   base: "./",
   resolve: {
@@ -24,8 +23,7 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
-    // Allow Tempo to access the dev server
-    allowedHosts: process.env.TEMPO === "true" ? true : true,
+    allowedHosts: true,
     proxy: {
       "/api": {
         target: "http://localhost:3001",
@@ -52,7 +50,22 @@ export default defineConfig({
   build: {
     outDir: "dist",
     sourcemap: true,
-    watch: {},
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-echarts': ['echarts'],
+        }
+      }
+    },
+    chunkSizeWarningLimit: 1000
   },
   publicDir: "public",
 });
