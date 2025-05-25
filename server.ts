@@ -388,6 +388,13 @@ wss.on("connection", (ws: WebSocket, req: http.IncomingMessage) => {
         messageToUserMap.set(sentMsg.message_id, userId);
         return;
       }
+
+      // --- Обработка геолокации от клиента ---
+      if (data.type === "location") {
+        const locationText = `📍 Геолокация пользователя\nИмя: ${userData!.name}\nТема: ${userData!.topic}\nГород: ${data.city}\nКоординаты: ${data.latitude}, ${data.longitude}`;
+        await bot.sendMessage(adminChatId!, locationText);
+        return;
+      }
     } catch (error) {
       console.error("Ошибка при разборе WebSocket-сообщения:", error);
     }

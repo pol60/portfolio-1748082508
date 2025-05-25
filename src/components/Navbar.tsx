@@ -3,8 +3,6 @@ import React from 'react';
 interface NavbarProps {
   activeSection: string;
   scrollToSection: (sectionId: string) => void;
-  darkMode: boolean;
-  setDarkMode: (darkMode: boolean) => void;
   isMenuOpen: boolean;
   setIsMenuOpen: (isOpen: boolean) => void;
 }
@@ -12,13 +10,11 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({
   activeSection,
   scrollToSection,
-  darkMode,
-  setDarkMode,
   isMenuOpen,
   setIsMenuOpen
 }) => {
   return (
-    <header className={`fixed top-0 left-0 w-full z-40 transition-all duration-300 ${activeSection !== 'home' ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-md' : 'bg-transparent'}`}>
+    <header className={`fixed top-0 left-0 w-full z-40 transition-all duration-300 ${activeSection !== 'home' ? 'bg-gray-900/80 backdrop-blur-md shadow-md' : 'bg-transparent'}`}>
       <div className="container mx-auto px-6 py-4 flex items-center justify-between">
         <a href="#home" className="text-2xl font-bold text-indigo-600 cursor-pointer" onClick={() => scrollToSection('home')}>
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">Портфолио</span>
@@ -34,7 +30,7 @@ const Navbar: React.FC<NavbarProps> = ({
                 scrollToSection(section);
               }}
               className={`relative py-2 text-sm uppercase tracking-wider font-medium cursor-pointer transition-colors ${
-                activeSection === section ? 'text-indigo-600' : 'text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400'
+                activeSection === section ? 'text-indigo-600' : 'text-gray-300 hover:text-indigo-400'
               }`}
             >
               {section === 'home' && 'Главная'}
@@ -51,19 +47,7 @@ const Navbar: React.FC<NavbarProps> = ({
         
         <div className="flex items-center space-x-4">
           <button 
-            onClick={() => setDarkMode(!darkMode)}
-            className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer"
-            aria-label="Переключить тему"
-          >
-            {darkMode ? (
-              <i className="fas fa-sun text-yellow-400"></i>
-            ) : (
-              <i className="fas fa-moon text-indigo-600"></i>
-            )}
-          </button>
-          
-          <button 
-            className="md:hidden p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+            className="md:hidden p-2 rounded-full hover:bg-gray-700 transition-colors cursor-pointer"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Меню"
           >

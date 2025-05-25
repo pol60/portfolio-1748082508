@@ -14,7 +14,6 @@ import Contact from "./sections/Contact";
 const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState("home");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 
   // Refs для графиков в секции Skills
@@ -60,16 +59,12 @@ const App: React.FC = () => {
   };
 
   return (
-    <div
-      className={`min-h-screen ${darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"} transition-colors duration-500`}
-    >
+    <div className="min-h-screen bg-gray-900 text-white transition-colors duration-500">
       <ScrollProgress progress={scrollProgress} />
 
       <Navbar
         activeSection={activeSection}
         scrollToSection={scrollToSection}
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
       />

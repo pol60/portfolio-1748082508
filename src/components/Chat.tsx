@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
+import "./Chat.css";
 
 interface FileData {
   id: string;
   name: string;
-  type: 'photo' | 'file';
+  type: "photo" | "file";
   url: string;
   preview?: string;
 }
@@ -12,7 +13,7 @@ interface FileData {
 interface Message {
   id: string;
   text: string;
-  type: 'text' | 'photo' | 'file';
+  type: "text" | "photo" | "file";
   fileId?: string;
   timestamp: number;
   isRead: boolean;
@@ -24,37 +25,31 @@ interface FormState {
   topic: string;
 }
 
-const Chat: React.FC = () => {
-  // ----------------- 1. Проверяем, не перезапускался ли сервер -----------------
+interface ChatProps {
+  isOpen?: boolean;
+  setIsOpen?: (isOpen: boolean) => void;
+}
+
+const Chat: React.FC<ChatProps> = ({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }) => {
+  // Отметка перезапуска сервера
   useEffect(() => {
-    // При монтировании компонента (пустой массив зависимостей)
     fetch("/server-start")
       .then((res) => res.json())
       .then((data: { serverStart: number }) => {
         const prev = localStorage.getItem("chat_serverStart");
         const newStamp = data.serverStart.toString();
-
         if (prev !== newStamp) {
-          // либо сервер первый раз, либо его перезапустили
           localStorage.removeItem("chat_user_id");
-          // Может быть несколько ключей вида chat_<id>_form, chat_<id>_messages.
-          // Точно знаем, что старые ключи содержат префикс "chat_".
           Object.keys(localStorage).forEach((key) => {
-            if (key.startsWith("chat_")) {
-              localStorage.removeItem(key);
-            }
+            if (key.startsWith("chat_")) localStorage.removeItem(key);
           });
-          // Сохраняем новую метку старта сервера
           localStorage.setItem("chat_serverStart", newStamp);
         }
       })
-      .catch(() => {
-        // В случае ошибки запроса /server-start просто ничего не делаем.
-      });
+      .catch(() => {});
   }, []);
-  // ------------------------------------------------------------------------------
 
-  // ----------------- 2. Инициализируем currentUserId из localStorage -----------------
+  // Инициализация userId
   const [currentUserId] = useState<string>(() => {
     const saved = localStorage.getItem("chat_user_id");
     if (saved) return saved;
@@ -64,26 +59,23 @@ const Chat: React.FC = () => {
   });
   const userIdRef = useRef<string>(currentUserId);
 
-  // ----------------- 3. Состояния чата -----------------
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  // Инициализируем form сразу из localStorage
+  // Используем внешнее или внутреннее состояние
+  const isOpen = externalIsOpen ?? internalIsOpen;
+  const setIsOpen = externalSetIsOpen ?? setInternalIsOpen;
+
   const [form, setForm] = useState<FormState>(() => {
     try {
       const saved = localStorage.getItem(`chat_${currentUserId}_form`);
-      if (saved) {
-        return JSON.parse(saved) as FormState;
-      }
-    } catch {
-      // если не удалось — вернём пустую форму
-    }
+      if (saved) return JSON.parse(saved) as FormState;
+    } catch {}
     return { name: "", topic: "" };
   });
-  // Показываем форму, только если нет имени и темы
   const [showForm, setShowForm] = useState<boolean>(() => {
     return !(Boolean(form.name) && Boolean(form.topic));
   });
@@ -95,15 +87,42 @@ const Chat: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<number | null>(null);
+  const isOpenRef = useRef<boolean>(isOpen);
 
-  // Определяем адрес бэкенда для /file endpoint
+  // Появление кнопки чата после прокрутки
+  const [showButton, setShowButton] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowButton(window.scrollY > 80);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Смена иконок внутри круглой кнопки
+  const icons = [
+    { class: "fas fa-hands-helping" },
+    { class: "fas fa-lightbulb" },
+    { class: "fas fa-comments" },
+  ];
+  const [iconIndex, setIconIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setIconIndex((idx) => (idx + 1) % icons.length);
+        setIsTransitioning(false);
+      }, 300);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   const serverOrigin = window.location.origin;
 
-  // ----------------- 4. Загрузка только сообщений из localStorage -----------------
+  // Загрузка сохранённых сообщений из localStorage
   useEffect(() => {
-    const savedMessages = localStorage.getItem(
-      `chat_${currentUserId}_messages`
-    );
+    const savedMessages = localStorage.getItem(`chat_${currentUserId}_messages`);
     if (savedMessages) {
       try {
         setMessages(JSON.parse(savedMessages));
@@ -113,65 +132,44 @@ const Chat: React.FC = () => {
     }
   }, [currentUserId]);
 
-  // ----------------- 5. Сохранение form + последних 100 сообщений в localStorage -----------------
+  // Сохранение form и последних 100 сообщений в localStorage
   useEffect(() => {
     const saveData = () => {
-      // Сохраняем форму
       try {
-        localStorage.setItem(
-          `chat_${currentUserId}_form`,
-          JSON.stringify(form)
-        );
-      } catch (e) {
-        console.warn("Не удалось записать form в localStorage:", e);
-      }
-
-      // Кэшируем максимум 100 последних сообщений
+        localStorage.setItem(`chat_${currentUserId}_form`, JSON.stringify(form));
+      } catch {}
       const MAX_CACHE = 100;
       if (messages.length > MAX_CACHE) {
-        const sliceStart = messages.length - MAX_CACHE;
-        const tail = messages.slice(sliceStart);
+        const tail = messages.slice(messages.length - MAX_CACHE);
         try {
           localStorage.setItem(
             `chat_${currentUserId}_messages`,
             JSON.stringify(tail)
           );
-        } catch (e) {
-          console.warn("Не удалось записать messages в localStorage:", e);
-        }
+        } catch {}
       } else {
         try {
           localStorage.setItem(
             `chat_${currentUserId}_messages`,
             JSON.stringify(messages)
           );
-        } catch (e) {
-          console.warn("Не удалось записать messages в localStorage:", e);
-        }
+        } catch {}
       }
     };
-
     window.addEventListener("beforeunload", saveData);
-    // Сразу сохраняем форму при любом её изменении
     try {
-      localStorage.setItem(
-        `chat_${currentUserId}_form`,
-        JSON.stringify(form)
-      );
+      localStorage.setItem(`chat_${currentUserId}_form`, JSON.stringify(form));
     } catch {}
-
     return () => {
       saveData();
       window.removeEventListener("beforeunload", saveData);
     };
   }, [messages, form, currentUserId]);
-  // ------------------------------------------------------------------------------------------------------------------
 
-  // ----------------- 6. Обработчик отправки формы (имя + тема) -----------------
+  // Отправка формы «имя + тема»
   const handleSubmitForm = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim()) return;
-
     const sendFormData = () => {
       if (wsRef.current?.readyState !== WebSocket.OPEN) {
         console.error("Соединение не установлено");
@@ -185,11 +183,8 @@ const Chat: React.FC = () => {
             setShowForm(false);
             wsRef.current?.removeEventListener("message", ackHandler);
           }
-        } catch {
-          // игнорируем
-        }
+        } catch {}
       };
-
       wsRef.current?.addEventListener("message", ackHandler);
       wsRef.current?.send(
         JSON.stringify({
@@ -199,7 +194,6 @@ const Chat: React.FC = () => {
         })
       );
     };
-
     if (wsRef.current?.readyState === WebSocket.CONNECTING) {
       wsRef.current.addEventListener("open", sendFormData);
     } else if (wsRef.current?.readyState === WebSocket.OPEN) {
@@ -210,13 +204,11 @@ const Chat: React.FC = () => {
       setTimeout(() => handleSubmitForm(e), 500);
     }
   };
-  // ------------------------------------------------------------------------------------------------------------------
 
-  // ----------------- 7. Обработчик загрузки файла (фото и не-фото) -----------------
+  // Загрузка файла (фото или документ)
   const handleFileUpload = async (file: File) => {
     const fileId = uuidv4();
     const reader = new FileReader();
-
     reader.onload = () => {
       const dataUrl = reader.result as string;
       const fileData: FileData = {
@@ -226,23 +218,18 @@ const Chat: React.FC = () => {
         url: dataUrl,
         preview: dataUrl,
       };
-
-      // Сохраняем во временные файлы для превью
       setTempFiles((prev) => [...prev, fileData]);
-
-      // Добавляем локальное сообщение сразу
       const localMsg: Message = {
         id: fileId,
         text: file.name,
         type: fileData.type,
-        fileId: fileId,
+        fileId,
         timestamp: Date.now(),
         isRead: false,
         fromUser: true,
       };
       setMessages((prev) => [...prev, localMsg]);
 
-      // Отправляем файл на сервер (base64 без префикса)
       wsRef.current?.send(
         JSON.stringify({
           type: "file",
@@ -253,74 +240,52 @@ const Chat: React.FC = () => {
         })
       );
     };
-
     reader.readAsDataURL(file);
   };
-  // ------------------------------------------------------------------------------------------------------------------
 
-  // ----------------- 8. WebSocket: подключение и обработка сообщений -----------------
+  // Открытие/переподключение WebSocket (единожды при монтировании)
   const connectWebSocket = useCallback(() => {
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
-      return;
-    }
-
+    if (wsRef.current?.readyState === WebSocket.OPEN) return;
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const host = window.location.host;
     const wsUrl = `${protocol}//${host}/ws?userId=${userIdRef.current}`;
-
     try {
       const ws = new WebSocket(wsUrl);
       wsRef.current = ws;
-
       ws.onopen = () => {
-        console.log("WebSocket соединение установлено");
         setIsConnected(true);
         if (reconnectTimeoutRef.current) {
           clearTimeout(reconnectTimeoutRef.current);
           reconnectTimeoutRef.current = null;
         }
       };
-
       ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-
-          // Подтверждение загрузки файла
-          if (data.type === "file_ack" && data.success) {
-            setMessages((prev) =>
-              prev.map((m) =>
-                m.id === data.fileId ? { ...m, isRead: true } : m
-              )
-            );
-            return;
-          }
-
-          if (data.type === "form_ack") {
-            setShowForm(false);
-            return;
-          }
-
+          // Init: загружаем только историю (без pending)
           if (data.type === "init") {
-            console.log(
-              "Получили INIT с сервера, сообщений:",
-              data.history.length
-            );
             setMessages((prevLocal) => {
               const serverHistory: Message[] = data.history;
               const serverMap = new Map<string, Message>();
               serverHistory.forEach((m) => serverMap.set(m.id, m));
-              const uniqueLocal = prevLocal.filter(
-                (m) => !serverMap.has(m.id)
-              );
+              const uniqueLocal = prevLocal.filter((m) => !serverMap.has(m.id));
               return [...uniqueLocal, ...serverHistory];
             });
-
-            if (data.pending && data.pending.length > 0) {
-              setUnreadCount(data.pending.length);
-            }
             return;
           }
-
+          // file_ack: помечаем отправленное фото/файл как прочитанное
+          if (data.type === "file_ack" && data.success) {
+            setMessages((prev) =>
+              prev.map((m) => (m.id === data.fileId ? { ...m, isRead: true } : m))
+            );
+            return;
+          }
+          // form_ack: закрываем форму
+          if (data.type === "form_ack") {
+            setShowForm(false);
+            return;
+          }
+          // Новое сообщение от администратора
           if (data.action === "admin_message") {
             const newMsg: Message = {
               id: data.id || uuidv4(),
@@ -328,25 +293,33 @@ const Chat: React.FC = () => {
               type: data.contentType,
               fileId: data.fileId,
               timestamp: data.timestamp || Date.now(),
-              isRead: data.isRead || false,
+              isRead: false,
               fromUser: false,
             };
             setMessages((prev) => [...prev, newMsg]);
-            if (!isOpen) {
+            if (!isOpenRef.current) {
               setUnreadCount((c) => c + 1);
             }
+            return;
+          }
+          // Текстовое сообщение от пользователя (исходящее)
+          if (data.type === "message") {
+            const newMessage: Message = {
+              id: uuidv4(),
+              text: data.text,
+              type: "text",
+              timestamp: data.timestamp || Date.now(),
+              isRead: false,
+              fromUser: true,
+            };
+            setMessages((prev) => [...prev, newMessage]);
+            return;
           }
         } catch (e) {
-          console.error("Ошибка при разборе сообщения WS:", e);
+          console.error("Ошибка при разборе WebSocket:", e);
         }
       };
-
       ws.onclose = (event) => {
-        console.log(
-          "WebSocket соединение закрыто",
-          event.code,
-          event.reason
-        );
         setIsConnected(false);
         wsRef.current = null;
         if (event.code !== 1000) {
@@ -355,76 +328,58 @@ const Chat: React.FC = () => {
           }, 5000);
         }
       };
-
-      ws.onerror = (error) => {
-        console.error("WebSocket ошибка:", error);
+      ws.onerror = () => {
         setIsConnected(false);
         reconnectTimeoutRef.current = window.setTimeout(() => {
           connectWebSocket();
         }, 5000);
       };
-
       return ws;
     } catch (error) {
       console.error("Ошибка при создании WebSocket:", error);
       return null;
     }
-  }, [isOpen]);
+  }, []);
 
+  // Монтирование: устанавливаем WebSocket; размонтирование: закрываем
   useEffect(() => {
-    if (isOpen) {
-      const ws = connectWebSocket();
-      return () => {
-        if (wsRef.current) {
-          wsRef.current.close(1000, "Chat closed");
-          wsRef.current = null;
-        }
-        if (reconnectTimeoutRef.current) {
-          clearTimeout(reconnectTimeoutRef.current);
-        }
-      };
-    }
-  }, [isOpen, connectWebSocket]);
+    connectWebSocket();
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close(1000, "Component unmounted");
+        wsRef.current = null;
+      }
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
+    };
+  }, [connectWebSocket]);
 
-  // Отправляем "прочитано" при открытии чата
+  // Синхронизация isOpenRef и сброс бейджа при открытии
   useEffect(() => {
+    isOpenRef.current = isOpen;
     if (isOpen) {
       setUnreadCount(0);
-      const sendReadStatus = () => {
-        if (wsRef.current?.readyState === WebSocket.OPEN) {
-          wsRef.current.send(
-            JSON.stringify({
-              type: "read",
-              userId: userIdRef.current,
-            })
-          );
-        }
-      };
-
-      if (wsRef.current?.readyState === WebSocket.CONNECTING) {
-        wsRef.current.addEventListener("open", sendReadStatus);
-        return () => {
-          wsRef.current?.removeEventListener("open", sendReadStatus);
-        };
-      } else {
-        sendReadStatus();
+      setMessages((prev) => prev.map((msg) => ({ ...msg, isRead: true })));
+      if (wsRef.current?.readyState === WebSocket.OPEN) {
+        wsRef.current.send(
+          JSON.stringify({ type: "read", userId: userIdRef.current })
+        );
       }
     }
   }, [isOpen]);
 
-  // Прокрутка вниз при новых сообщениях
+  // Автопрокрутка вниз при новых сообщениях
   useEffect(() => {
     if (messagesEndRef.current && isOpen) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, isOpen]);
-  // ------------------------------------------------------------------------
 
-  // ----------------- 9. Отправка текстового сообщения  -----------------
+  // Отправка текстового сообщения
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
-
     const sendMessage = () => {
       const message: Message = {
         id: uuidv4(),
@@ -434,10 +389,8 @@ const Chat: React.FC = () => {
         isRead: false,
         fromUser: true,
       };
-
       setMessages((prev) => [...prev, message]);
       setNewMessage("");
-
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
         wsRef.current.send(
           JSON.stringify({
@@ -451,21 +404,16 @@ const Chat: React.FC = () => {
         console.error("WebSocket не готов к отправке");
       }
     };
-
     if (wsRef.current?.readyState === WebSocket.CONNECTING) {
       wsRef.current.addEventListener("open", sendMessage);
     } else {
       sendMessage();
     }
   };
-  // ------------------------------------------------------------------------
 
   const formatTime = (timestamp: number) => {
     const date = new Date(timestamp);
-    return date.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
   const formatDate = (timestamp: number) => {
@@ -477,278 +425,385 @@ const Chat: React.FC = () => {
     const groups: { [date: string]: Message[] } = {};
     messages.forEach((message) => {
       const dateStr = formatDate(message.timestamp);
-      if (!groups[dateStr]) {
-        groups[dateStr] = [];
-      }
+      if (!groups[dateStr]) groups[dateStr] = [];
       groups[dateStr].push(message);
     });
     return groups;
   };
   const messageGroups = groupMessagesByDate();
 
+  useEffect(() => {
+    if (isOpen && messages.length === 0) {
+      const welcomeMessage: Message = {
+        id: uuidv4(),
+        text:
+          "Привет! 👋 Я готов помочь вам с вашим проектом. Расскажите, какую идею вы хотите реализовать?",
+        type: "text",
+        timestamp: Date.now(),
+        isRead: true,
+        fromUser: false,
+      };
+      setMessages([welcomeMessage]);
+    }
+  }, [isOpen]);
+
+  // Обновление unreadCount, если чат закрыт и приходят новые сообщения
+  useEffect(() => {
+    const unreadMessages = messages.filter(
+      (msg) => !msg.isRead && !msg.fromUser
+    ).length;
+    if (!isOpen) {
+      setUnreadCount(unreadMessages);
+    }
+  }, [messages, isOpen]);
+
   return (
-    <div className="fixed bottom-4 right-4 z-50">
-      {!isOpen ? (
+    <>
+      {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-indigo-600 text-white p-4 rounded-full shadow-lg hover:bg-indigo-700 transition-colors relative"
+          className={`fixed bottom-6 right-6 z-50 bg-gradient-to-r from-indigo-600 to-purple-600 text-white w-16 h-16 rounded-full shadow-xl flex items-center justify-center hover:from-indigo-700 hover:to-purple-700 transition-all duration-500 transform hover:scale-110 chat-button ${
+            showButton ? "chat-button-enter" : "chat-button-exit"
+          }`}
+          style={{ display: showButton ? "flex" : "none" }}
+          aria-label="Открыть чат поддержки"
         >
-          <i className="fas fa-comments text-xl"></i>
+          <div className="relative w-7 h-7 flex items-center justify-center">
+            {icons.map((icon, idx) => (
+              <i
+                key={icon.class}
+                className={`${icon.class} absolute text-xl transition-all duration-700 ease-in-out ${
+                  idx === iconIndex
+                    ? `opacity-100 scale-100 ${
+                        isTransitioning ? "icon-morph" : ""
+                      }`
+                    : "opacity-0 scale-50"
+                }`}
+              />
+            ))}
+          </div>
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-              {unreadCount}
+            <span
+              className="notification-badge"
+              style={{
+                animation: "notificationPulse 1s infinite",
+                transform: "scale(1)",
+                opacity: 1,
+              }}
+            >
+              {unreadCount > 99 ? "99+" : unreadCount}
             </span>
           )}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-400 to-purple-400 opacity-0 hover:opacity-30 transition-opacity duration-300 animate-pulse"></div>
         </button>
-      ) : (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-sm h-[80vh] sm:w-96 sm:h-[600px] flex flex-col">
-          <div className="bg-indigo-600 text-white p-4 flex items-center justify-between">
-            <div className="flex items-center">
-              <div
-                className={`w-2 h-2 rounded-full mr-2 ${
-                  isConnected ? "bg-green-400" : "bg-red-400"
-                }`}
-              ></div>
-              <div>
-                <h3 className="font-medium">Чат поддержки</h3>
-                <button
-                  onClick={() => setShowTopicForm(true)}
-                  className="text-xs opacity-75 hover:opacity-100"
-                >
-                  Тема: {form.topic || "Без темы"} (изменить)
-                </button>
-              </div>
-            </div>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-white hover:text-gray-200 transition-colors"
-              aria-label="Закрыть чат"
-            >
-              <i className="fas fa-times"></i>
-            </button>
-          </div>
+      )}
 
-          {showForm ? (
-            <div className="p-4 flex-1">
-              <form onSubmit={handleSubmitForm} className="space-y-4">
+      {isOpen && (
+        <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-4 slide-in-from-right-4 duration-500">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-sm h-[80vh] sm:w-96 sm:h-[600px] flex flex-col border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4 flex items-center justify-between">
+              <div className="flex items-center">
+                <div
+                  className={`w-3 h-3 rounded-full mr-3 animate-pulse ${
+                    isConnected
+                      ? "bg-green-400 shadow-green-400/50"
+                      : "bg-red-400 shadow-red-400/50"
+                  }`}
+                  style={{
+                    boxShadow: `0 0 10px ${
+                      isConnected ? "#4ade80" : "#f87171"
+                    }`,
+                  }}
+                />
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Ваше имя
-                  </label>
-                  <input
-                    type="text"
-                    value={form.name}
-                    onChange={(e) =>
-                      setForm((p) => ({ ...p, name: e.target.value }))
-                    }
-                    className="w-full p-2 border rounded text-gray-900 dark:text-white dark:bg-gray-700 dark:border-gray-600"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Тема обращения
-                  </label>
-                  <input
-                    type="text"
-                    value={form.topic}
-                    onChange={(e) =>
-                      setForm((p) => ({ ...p, topic: e.target.value }))
-                    }
-                    className="w-full p-2 border rounded text-gray-900 dark:text-white dark:bg-gray-700 dark:border-gray-600"
-                    required
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
-                >
-                  Начать чат
-                </button>
-              </form>
-            </div>
-          ) : (
-            <>
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {Object.entries(messageGroups).map(([date, msgs]) => (
-                  <div key={date}>
-                    <div className="text-center text-sm text-gray-500 dark:text-gray-400 my-2">
-                      {date}
-                    </div>
-                    {msgs.map((msg) => (
-                      <div
-                        key={msg.id}
-                        className={`flex ${msg.fromUser ? 'justify-end' : 'justify-start'} mb-2`}
-                      >
-                        <div
-                          className={`max-w-[80%] rounded-lg p-3 ${
-                            msg.fromUser
-                              ? "bg-indigo-600 text-white"
-                              : "bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white"
-                          }`}
-                        >
-                          <div className="text-sm">{msg.text}</div>
-
-                          {/* Рендерим картинку, если type === 'photo' */}
-                          {msg.type === "photo" &&
-                            (() => {
-                              const localFile = tempFiles.find(
-                                (f) => f.id === msg.fileId
-                              );
-                              const src = localFile
-                                ? localFile.preview!
-                                : `${serverOrigin}/file/${msg.fileId}`;
-                              return (
-                                <img
-                                  src={src}
-                                  alt={msg.text}
-                                  className="mt-2 rounded max-w-full max-h-64 object-contain cursor-pointer"
-                                  onClick={() => {
-                                    if (localFile) {
-                                      setShowFilePreview(localFile);
-                                    } else {
-                                      setShowFilePreview({
-                                        id: msg.fileId!,
-                                        name: msg.text,
-                                        type: "photo",
-                                        url: `${serverOrigin}/file/${msg.fileId}`,
-                                        preview: `${serverOrigin}/file/${msg.fileId}`,
-                                      });
-                                    }
-                                  }}
-                                />
-                              );
-                            })()}
-
-                          {/* Рендерим файл, если type === 'file' */}
-                          {msg.type === "file" &&
-                            (() => {
-                              const localFile = tempFiles.find(
-                                (f) => f.id === msg.fileId
-                              );
-                              const href = localFile
-                                ? localFile.url
-                                : `${serverOrigin}/file/${msg.fileId}`;
-                              return (
-                                <div className="mt-2 p-2 bg-gray-100 dark:bg-gray-700 rounded">
-                                  <a
-                                    href={href}
-                                    download
-                                    className="text-blue-500 dark:text-blue-300"
-                                  >
-                                    <i className="fas fa-file-download mr-2"></i>
-                                    {msg.text}
-                                  </a>
-                                </div>
-                              );
-                            })()}
-
-                          <div className="text-xs opacity-75 mt-1">
-                            {formatTime(msg.timestamp)}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ))}
-                <div ref={messagesEndRef} />
-              </div>
-
-              <form
-                onSubmit={handleSendMessage}
-                className="p-4 border-t dark:border-gray-700"
-              >
-                <div className="flex space-x-2">
-                  <input
-                    type="text"
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    className="flex-1 p-2 border rounded text-gray-900 dark:text-white dark:bg-gray-700 dark:border-gray-600"
-                    placeholder="Введите сообщение..."
-                  />
-                  <label className="cursor-pointer">
-                    <input
-                      type="file"
-                      className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) handleFileUpload(file);
-                      }}
-                    />
-                    <i className="fas fa-paperclip text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-xl p-2"></i>
-                  </label>
+                  <h3 className="font-semibold text-lg">Чат поддержки</h3>
                   <button
-                    type="submit"
-                    className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+                    onClick={() => setShowTopicForm(true)}
+                    className="text-sm opacity-80 hover:opacity-100 transition-opacity duration-200 underline decoration-dotted"
                   >
-                    <i className="fas fa-paper-plane"></i>
+                    Тема: {form.topic || "Без темы"} (изменить)
                   </button>
                 </div>
-              </form>
-            </>
+              </div>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-white hover:text-gray-200 transition-colors duration-200 p-2 rounded-full hover:bg-white/20"
+                aria-label="Закрыть чат"
+              >
+                <i className="fas fa-times text-lg"></i>
+              </button>
+            </div>
+
+            {showForm ? (
+              <div className="p-6 flex-1 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
+                <form onSubmit={handleSubmitForm} className="space-y-6">
+                  <div className="text-center mb-6">
+                    <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <i className="fas fa-user text-white text-2xl"></i>
+                    </div>
+                    <h4 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+                      Давайте знакомиться!
+                    </h4>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">
+                      Расскажите нам о себе, чтобы мы могли лучше помочь
+                    </p>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <label
+                        htmlFor="chat-name"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                      >
+                        <i className="fas fa-user mr-2"></i>Ваше имя
+                      </label>
+                      <input
+                        id="chat-name"
+                        type="text"
+                        value={form.name}
+                        onChange={(e) =>
+                          setForm((p) => ({ ...p, name: e.target.value }))
+                        }
+                        className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:ring-opacity-50 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm transition-all duration-200"
+                        placeholder="Введите ваше имя"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="chat-topic"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                      >
+                        <i className="fas fa-comment-dots mr-2"></i>Тема обращения
+                      </label>
+                      <input
+                        id="chat-topic"
+                        type="text"
+                        value={form.topic}
+                        onChange={(e) =>
+                          setForm((p) => ({ ...p, topic: e.target.value }))
+                        }
+                        className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:ring-opacity-50 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm transition-all duration-200"
+                        placeholder="О чём хотите поговорить?"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  >
+                    <i className="fas fa-paper-plane mr-2"></i>
+                    Начать чат
+                  </button>
+                </form>
+              </div>
+            ) : (
+              <>
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900">
+                  {Object.entries(messageGroups).map(([date, msgs]) => (
+                    <div key={date}>
+                      <div className="text-center text-sm text-gray-500 dark:text-gray-400 my-4 relative">
+                        <span className="bg-gray-50 dark:bg-gray-900 px-3 py-1 rounded-full border border-gray-200 dark:border-gray-700">
+                          {date}
+                        </span>
+                      </div>
+                      {msgs.map((msg) => (
+                        <div
+                          key={msg.id}
+                          className={`flex ${
+                            msg.fromUser ? "justify-end" : "justify-start"
+                          } mb-3 animate-in slide-in-from-bottom-2 duration-300`}
+                        >
+                          <div
+                            className={`max-w-[80%] rounded-2xl p-4 shadow-md ${
+                              msg.fromUser
+                                ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-br-md"
+                                : "bg-white text-gray-900 dark:bg-gray-800 dark:text-white rounded-bl-md border border-gray-200 dark:border-gray-700"
+                            }`}
+                          >
+                            <div className="text-sm leading-relaxed">
+                              {msg.text}
+                            </div>
+                            {msg.type === "photo" &&
+                              (() => {
+                                const localFile = tempFiles.find(
+                                  (f) => f.id === msg.fileId
+                                );
+                                const src = localFile
+                                  ? localFile.preview!
+                                  : `${serverOrigin}/file/${msg.fileId}`;
+                                return (
+                                  <img
+                                    src={src}
+                                    alt={msg.text}
+                                    className="mt-3 rounded-xl max-w-full max-h-64 object-contain cursor-pointer hover:scale-105 transition-transform duration-200 shadow-lg"
+                                    onClick={() => {
+                                      if (localFile) {
+                                        setShowFilePreview(localFile);
+                                      } else {
+                                        setShowFilePreview({
+                                          id: msg.fileId!,
+                                          name: msg.text,
+                                          type: "photo",
+                                          url: `${serverOrigin}/file/${msg.fileId}`,
+                                          preview: `${serverOrigin}/file/${msg.fileId}`,
+                                        });
+                                      }
+                                    }}
+                                  />
+                                );
+                              })()}
+                            {msg.type === "file" &&
+                              (() => {
+                                const localFile = tempFiles.find(
+                                  (f) => f.id === msg.fileId
+                                );
+                                const href = localFile
+                                  ? localFile.url
+                                  : `${serverOrigin}/file/${msg.fileId}`;
+                                return (
+                                  <div className="mt-3 p-3 bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200">
+                                    <a
+                                      href={href}
+                                      download
+                                      className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium flex items-center"
+                                    >
+                                      <i className="fas fa-file-download mr-2"></i>
+                                      {msg.text}
+                                    </a>
+                                  </div>
+                                );
+                              })()}
+                            <div className="text-xs opacity-75 mt-2 flex items-center justify-between">
+                              <span>{formatTime(msg.timestamp)}</span>
+                              {msg.fromUser && (
+                                <i
+                                  className={`fas ${
+                                    msg.isRead
+                                      ? "fa-check-double text-blue-300"
+                                      : "fa-check"
+                                  } ml-2`}
+                                ></i>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                  <div ref={messagesEndRef} />
+                </div>
+                <form
+                  onSubmit={handleSendMessage}
+                  className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+                >
+                  <div className="flex space-x-3">
+                    <input
+                      type="text"
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      className="flex-1 px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm transition-all duration-200"
+                      placeholder="Введите сообщение..."
+                    />
+                    <label className="cursor-pointer flex items-center justify-center w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 transform hover:scale-105">
+                      <input
+                        type="file"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleFileUpload(file);
+                        }}
+                      />
+                      <i className="fas fa-paperclip text-gray-500 dark:text-gray-300 text-lg"></i>
+                    </label>
+                    <button
+                      type="submit"
+                      className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white w-12 h-12 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 shadow-lg"
+                    >
+                      <i className="fas fa-paper-plane"></i>
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
+          </div>
+
+          {showFilePreview && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm animate-in fade-in duration-300">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl max-w-4xl max-h-[90vh] shadow-2xl animate-in zoom-in-95 duration-300">
+                <img
+                  src={showFilePreview.preview}
+                  alt={showFilePreview.name}
+                  className="max-w-full max-h-[75vh] object-contain rounded-xl shadow-lg"
+                />
+                <div className="flex justify-between items-center mt-4">
+                  <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200 truncate">
+                    {showFilePreview.name}
+                  </h4>
+                  <button
+                    onClick={() => setShowFilePreview(null)}
+                    className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
+                  >
+                    <i className="fas fa-times mr-2"></i>
+                    Закрыть
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {showTopicForm && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm animate-in fade-in duration-300">
+              <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl w-96 shadow-2xl animate-in zoom-in-95 duration-300">
+                <div className="text-center mb-6">
+                  <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i className="fas fa-edit text-white text-2xl"></i>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+                    Изменить тему
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">
+                    Расскажите, о чём хотите поговорить
+                  </p>
+                </div>
+
+                <input
+                  type="text"
+                  value={form.topic}
+                  onChange={(e) =>
+                    setForm((p) => ({ ...p, topic: e.target.value }))
+                  }
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:ring-opacity-50 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm mb-6 transition-all duration-200"
+                  placeholder="Новая тема обращения"
+                />
+
+                <div className="flex justify-end space-x-3">
+                  <button
+                    onClick={() => setShowTopicForm(false)}
+                    className="px-6 py-3 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-500 transition-all duration-200 transform hover:scale-105"
+                  >
+                    <i className="fas fa-times mr-2"></i>
+                    Отмена
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowTopicForm(false);
+                      wsRef.current?.send(
+                        JSON.stringify({ type: "update_topic", topic: form.topic })
+                      );
+                    }}
+                    className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
+                  >
+                    <i className="fas fa-save mr-2"></i>
+                    Сохранить
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       )}
-
-      {/* Модальное окно для превью файлов */}
-      {showFilePreview && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg max-w-3xl max-h-[90vh]">
-            <img
-              src={showFilePreview.preview}
-              alt={showFilePreview.name}
-              className="max-w-full max-h-[80vh] object-contain"
-            />
-            <button
-              onClick={() => setShowFilePreview(null)}
-              className="mt-4 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-            >
-              Закрыть
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Модальное окно для изменения темы */}
-      {showTopicForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg w-96">
-            <h3 className="text-lg font-medium mb-4">Изменить тему</h3>
-            <input
-              type="text"
-              value={form.topic}
-              onChange={(e) =>
-                setForm((p) => ({ ...p, topic: e.target.value }))
-              }
-              className="w-full mb-4 p-2 border rounded text-gray-900 dark:text-white dark:bg-gray-700 dark:border-gray-600"
-              placeholder="Новая тема"
-            />
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={() => setShowTopicForm(false)}
-                className="px-4 py-2 bg-gray-200 dark:bg-gray-600 rounded hover:bg-gray-300"
-              >
-                Отмена
-              </button>
-              <button
-                onClick={() => {
-                  setShowTopicForm(false);
-                  wsRef.current?.send(
-                    JSON.stringify({
-                      type: "update_topic",
-                      topic: form.topic,
-                    })
-                  );
-                }}
-                className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-              >
-                Сохранить
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 
