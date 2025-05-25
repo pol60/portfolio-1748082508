@@ -155,7 +155,7 @@ const Skills: React.FC<SkillsProps> = ({ skillChartRef, experienceChartRef }) =>
                 Уровень навыков
               </h3>
               {/* Используем импортированный компонент */}
-              <SkillChart skills={skills} />
+              <SkillChart ref={skillChartRef} skills={skills} />
             </div>
 
             <div className="relative -top-16">

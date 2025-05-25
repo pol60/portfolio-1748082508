@@ -10,13 +10,16 @@ import {
 /**
  * Props for SkillChart. Extend if you need additional inputs.
  */
-export interface SkillChartProps {}
+export interface SkillChartProps {
+  skills: { name: string; value: number }[];
+}
 
 /**
  * SkillChart renders a radar chart of skills using ECharts
  * Supports forwarded ref to the chart container div
  */
 const SkillChart = forwardRef<HTMLDivElement, SkillChartProps>((props, ref: Ref<HTMLDivElement>) => {
+  const { skills } = props;
   const containerRef = useRef<HTMLDivElement>(null);
   const [chart, setChart] = useState<any>(null);
 
@@ -43,14 +46,7 @@ const SkillChart = forwardRef<HTMLDivElement, SkillChartProps>((props, ref: Ref<
       const option = {
         animation: false,
         radar: {
-          indicator: [
-            { name: 'React', max: 100 },
-            { name: 'TypeScript', max: 100 },
-            { name: 'Node.js', max: 100 },
-            { name: 'Next.js', max: 100 },
-            { name: 'MongoDB', max: 100 },
-            { name: 'PostgreSQL', max: 100 },
-          ],
+          indicator: skills.map(skill => ({ name: skill.name, max: 100 })),
           radius: '65%',
           splitNumber: 4,
           axisName: {
@@ -69,7 +65,7 @@ const SkillChart = forwardRef<HTMLDivElement, SkillChartProps>((props, ref: Ref<
             type: 'radar',
             data: [
               {
-                value: [95, 90, 85, 90, 80, 85],
+                value: skills.map(skill => skill.value),
                 name: 'Уровень владения',
                 areaStyle: {
                   color: 'rgba(99, 102, 241, 0.4)',
@@ -98,7 +94,7 @@ const SkillChart = forwardRef<HTMLDivElement, SkillChartProps>((props, ref: Ref<
       window.removeEventListener('resize', handleResize);
       chart?.dispose();
     };
-  }, []);
+  }, [skills]);
 
   return <div ref={containerRef} className="w-full h-80" />;
 });
