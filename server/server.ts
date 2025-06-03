@@ -712,10 +712,10 @@ const fileHandler: RequestHandler = (req, res) => {
 app.get("/file/:id", fileHandler);
 // ---------------------------------------------------------
 
-// Простой endpoint для проверки
-app.get("/", (_req: Request, res: Response) => {
-  res.send("Сервер чата работает");
-});
+// Простой endpoint для проверки (оставить только для разработки)
+// app.get("/", (_req: Request, res: Response) => {
+//   res.send("Сервер чата работает");
+// });
 
 if (isProduction) {
   // Обработка всех остальных маршрутов в продакшене
