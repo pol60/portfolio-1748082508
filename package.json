@@ -3,15 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "description": "Интерактивное Портфолио Разработчика",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "dev:server": "tsx watch server.ts",
     "dev:all": "concurrently \"npm run dev:server\" \"npm run dev\"",
     "build": "tsc && vite build",
-    "start": "NODE_ENV=production node dist/server.js",
+    "start": "NODE_ENV=production node server-dist/server.js",
     "preview": "vite preview",
-    "heroku-postbuild": "ls -l server.ts && tsc --listEmittedFiles && ls -l dist && ls -l dist/server.js"
+    "heroku-postbuild": "ls -l server.ts && tsc --listEmittedFiles && ls -l server-dist && ls -l server-dist/server.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
