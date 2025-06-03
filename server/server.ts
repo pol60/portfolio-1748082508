@@ -720,7 +720,7 @@ app.get("/", (_req: Request, res: Response) => {
 if (isProduction) {
   // Обработка всех остальных маршрутов в продакшене
   app.get("*", (req: Request, res: Response) => {
-    res.sendFile(path.join(__dirname, "dist", "index.html"));
+    res.sendFile(path.join(__dirname, "../dist", "index.html"));
   });
 }
 
