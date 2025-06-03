@@ -10,7 +10,7 @@
     "build": "tsc && vite build",
     "start": "NODE_ENV=production node server-dist/server.js",
     "preview": "vite preview",
-    "heroku-postbuild": "ls -l server/server.ts && tsc --listEmittedFiles && ls -l server-dist && ls -l server-dist/server.js"
+    "heroku-postbuild": "tsc && vite build"
   },
   "dependencies": {
     "cors": "^2.8.5",
