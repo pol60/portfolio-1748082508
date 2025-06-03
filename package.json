@@ -5,12 +5,12 @@
   "description": "Интерактивное Портфолио Разработчика",
   "scripts": {
     "dev": "vite",
-    "dev:server": "tsx watch server.ts",
+    "dev:server": "tsx watch server/server.ts",
     "dev:all": "concurrently \"npm run dev:server\" \"npm run dev\"",
     "build": "tsc && vite build",
     "start": "NODE_ENV=production node server-dist/server.js",
     "preview": "vite preview",
-    "heroku-postbuild": "ls -l server.ts && tsc --listEmittedFiles && ls -l server-dist && ls -l server-dist/server.js"
+    "heroku-postbuild": "ls -l server/server.ts && tsc --listEmittedFiles && ls -l server-dist && ls -l server-dist/server.js"
   },
   "dependencies": {
     "cors": "^2.8.5",

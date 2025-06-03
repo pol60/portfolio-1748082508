@@ -15,12 +15,10 @@
     "isolatedModules": true,
     "noEmit": false,
     "outDir": "server-dist",
-    "rootDir": "src",
+    "rootDir": "server",
     "jsx": "react-jsx"
   },
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/server.ts"
+    "server/**/*.ts"
   ]
 }
