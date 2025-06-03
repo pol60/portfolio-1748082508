@@ -60,7 +60,7 @@ app.use(express.json());
 
 // В продакшене отдаем статические файлы
 if (isProduction) {
-  const clientDistPath = path.resolve(__dirname, "dist");
+  const clientDistPath = path.resolve(__dirname, "../dist");
   app.use(express.static(clientDistPath));
 }
 
