@@ -10,7 +10,8 @@
     "dev:all": "concurrently \"npm run dev:server\" \"npm run dev\"",
     "build": "tsc && vite build",
     "start": "NODE_ENV=production node dist/server.js",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "heroku-postbuild": "ls -l server.ts && tsc --listEmittedFiles && ls -l dist && ls -l dist/server.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
