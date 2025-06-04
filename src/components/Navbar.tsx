@@ -46,7 +46,7 @@ const Navbar: React.FC<NavbarProps> = ({
         </nav>
 
         {/* Блок с иконками */}
-        <div className="hidden md:flex items-center space-x-6 mx-12">
+        <div className="hidden md:flex items-center space-x-6 ml-auto">
           <div className="flex items-center space-x-4">
             <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
               <i className="fab fa-react text-blue-400 text-xl"></i>
@@ -61,10 +61,22 @@ const Navbar: React.FC<NavbarProps> = ({
               <i className="fab fa-python text-blue-500 text-xl"></i>
             </div>
             <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
-              <i className="fas fa-database text-indigo-400 text-xl"></i>
+              <i className="fas fa-database text-pink-600 text-xl"></i>
             </div>
             <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
               <i className="fab fa-css3-alt text-blue-400 text-xl"></i>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+              <i className="fab fa-github text-gray-300 text-xl"></i>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+              <i className="devicon-typescript-plain colored text-xl"></i>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+              <i className="fab fa-npm text-red-600 text-xl"></i>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+              <i className="devicon-vitejs-plain colored text-xl"></i>
             </div>
           </div>
         </div>

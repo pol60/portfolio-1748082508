@@ -70,7 +70,7 @@ const Home: React.FC<HomeProps> = ({ scrollToSection = () => {} }) => {
         this.repulsionForce = 120.0;
         this.returnForce = 0.008;
         this.dampening = 0.85;
-        this.globalSpeedFactor = 0.3;
+        this.globalSpeedFactor = 0.6;
 
         this.frameCount = 0;
         this.resizeTimeout = null;

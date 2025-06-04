@@ -33,9 +33,9 @@
       content="
       default-src 'self';
       script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com;
-      style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
+      style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net;
       img-src 'self' data: https: http://localhost:3001;
-      font-src 'self' https://cdnjs.cloudflare.com;
+      font-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net *;
       connect-src 'self' https://api.your-domain.com ws://localhost:5173 wss://localhost:5173 ws://localhost:3001 wss://localhost:3001;
     "
     />
@@ -46,6 +46,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
     />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/devicon.min.css" />
     <title>Портфолио Разработчика</title>
   </head>
   <body>
