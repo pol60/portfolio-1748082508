@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 export interface Project {
   id: number;
@@ -6,6 +6,7 @@ export interface Project {
   description: string;
   category: string;
   image: string;
+  previewImage?: string;
   demoUrl: string;
   githubUrl: string;
   technologies: string[];
@@ -16,13 +17,55 @@ interface ProjectCardProps {
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const imageRef = useRef<HTMLDivElement>(null);
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        } else {
+          setIsVisible(false);
+        }
+      },
+      {
+        threshold: 0.1,
+        rootMargin: "50px",
+      }
+    );
+
+    if (descriptionRef.current) {
+      observer.observe(descriptionRef.current);
+    }
+
+    return () => {
+      if (descriptionRef.current) {
+        observer.unobserve(descriptionRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:transform hover:scale-105 flex flex-col h-[480px]">
-      <div className="relative h-[200px] flex-shrink-0">
+      <div 
+        ref={imageRef}
+        className="relative h-[200px] flex-shrink-0 overflow-hidden"
+      >
         <img
           src={project.image}
           alt={project.title}
-          className="w-full h-full object-cover object-top transition-transform duration-700 hover:transform hover:scale-110"
+          className={`absolute inset-0 w-full h-full object-cover object-top transition-all duration-700 ${
+            isVisible ? "opacity-0 scale-110" : "opacity-100 scale-100"
+          }`}
+        />
+        <img
+          src={project.previewImage}
+          alt={`${project.title} preview`}
+          className={`absolute inset-0 w-full h-full object-cover object-top transition-all duration-700 ${
+            isVisible ? "opacity-100 scale-100" : "opacity-0 scale-110"
+          }`}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
           <div className="p-6">
@@ -39,7 +82,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           </h3>
         </div>
         <div className="mb-4 flex-1">
-          <p className="text-gray-600 dark:text-gray-300 line-clamp-3">
+          <p 
+            ref={descriptionRef}
+            className="text-gray-600 dark:text-gray-300 line-clamp-3"
+          >
             {project.description}
           </p>
         </div>

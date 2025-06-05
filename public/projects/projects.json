@@ -6,7 +6,8 @@
       "description": "Полнофункциональный интернет-магазин с каталогом товаров, корзиной, системой оплаты и панелью администратора.",
       "category": "E-commerce",
       "image": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&q=80",
-      "demoUrl": "https://example-ecommerce.com",
+      "previewImage": "https://i.postimg.cc/jjWH305h/2025-06-05-10-29-16.png",
+      "demoUrl": "https://shinago-story.vercel.app",
       "githubUrl": "https://github.com/example/ecommerce",
       "technologies": ["React", "Node.js", "MongoDB", "Stripe"]
     },
@@ -16,7 +17,8 @@
       "description": "Приложение для управления проектами с канбан-досками, отслеживанием времени и совместной работой в команде.",
       "category": "Productivity",
       "image": "https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?w=800&q=80",
-      "demoUrl": "https://example-taskmanager.com",
+      "previewImage": "https://i.postimg.cc/V6tBzdVN/IMG-1552.png",
+      "demoUrl": "https://pol60.github.io/UGU-clouding/",
       "githubUrl": "https://github.com/example/taskmanager",
       "technologies": ["Next.js", "TypeScript", "PostgreSQL", "Supabase"]
     },
@@ -26,6 +28,7 @@
       "description": "Социальная сеть с профилями пользователей, лентой новостей, сообщениями и системой рекомендаций.",
       "category": "Social",
       "image": "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&q=80",
+      "previewImage": "https://i.postimg.cc/jjWH305h/2025-06-05-10-29-16.png",
       "demoUrl": "https://example-social.com",
       "githubUrl": "https://github.com/example/social",
       "technologies": ["React", "GraphQL", "Node.js", "MongoDB"]
@@ -38,6 +41,7 @@
       "description": "Full-featured online store with product catalog, shopping cart, payment system and admin panel.",
       "category": "E-commerce",
       "image": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&q=80",
+      "previewImage": "https://i.postimg.cc/jjWH305h/2025-06-05-10-29-16.png",
       "demoUrl": "https://example-ecommerce.com",
       "githubUrl": "https://github.com/example/ecommerce",
       "technologies": ["React", "Node.js", "MongoDB", "Stripe"]
@@ -48,7 +52,8 @@
       "description": "Project management application with kanban boards, time tracking and team collaboration.",
       "category": "Productivity",
       "image": "https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?w=800&q=80",
-      "demoUrl": "https://example-taskmanager.com",
+      "previewImage": "https://i.postimg.cc/1thSBTcn/2025-06-05-15-39-48.png",
+      "demoUrl": "https://pol60.github.io/UGU-clouding",
       "githubUrl": "https://github.com/example/taskmanager",
       "technologies": ["Next.js", "TypeScript", "PostgreSQL", "Supabase"]
     },
@@ -58,6 +63,7 @@
       "description": "Social network with user profiles, news feed, messaging and recommendation system.",
       "category": "Social",
       "image": "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&q=80",
+      "previewImage": "https://i.postimg.cc/jjWH305h/2025-06-05-10-29-16.png",
       "demoUrl": "https://example-social.com",
       "githubUrl": "https://github.com/example/social",
       "technologies": ["React", "GraphQL", "Node.js", "MongoDB"]
@@ -70,6 +76,7 @@
       "description": "Повнофункціональний інтернет-магазин з каталогом товарів, кошиком, системою оплати та панеллю адміністратора.",
       "category": "E-commerce",
       "image": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&q=80",
+      "previewImage": "https://i.postimg.cc/jjWH305h/2025-06-05-10-29-16.png",
       "demoUrl": "https://example-ecommerce.com",
       "githubUrl": "https://github.com/example/ecommerce",
       "technologies": ["React", "Node.js", "MongoDB", "Stripe"]
@@ -80,6 +87,7 @@
       "description": "Додаток для управління проектами з канбан-дошками, відстеженням часу та спільною роботою в команді.",
       "category": "Productivity",
       "image": "https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?w=800&q=80",
+      "previewImage": "https://i.postimg.cc/jjWH305h/2025-06-05-10-29-16.png",
       "demoUrl": "https://example-taskmanager.com",
       "githubUrl": "https://github.com/example/taskmanager",
       "technologies": ["Next.js", "TypeScript", "PostgreSQL", "Supabase"]
@@ -90,6 +98,7 @@
       "description": "Соціальна мережа з профілями користувачів, стрічкою новин, повідомленнями та системою рекомендацій.",
       "category": "Social",
       "image": "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&q=80",
+      "previewImage": "https://i.postimg.cc/jjWH305h/2025-06-05-10-29-16.png",
       "demoUrl": "https://example-social.com",
       "githubUrl": "https://github.com/example/social",
       "technologies": ["React", "GraphQL", "Node.js", "MongoDB"]
@@ -102,6 +111,7 @@
       "description": "Vollständiger Online-Shop mit Produktkatalog, Warenkorb, Zahlungssystem und Admin-Panel.",
       "category": "E-commerce",
       "image": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&q=80",
+      "previewImage": "https://i.postimg.cc/jjWH305h/2025-06-05-10-29-16.png",
       "demoUrl": "https://example-ecommerce.com",
       "githubUrl": "https://github.com/example/ecommerce",
       "technologies": ["React", "Node.js", "MongoDB", "Stripe"]
@@ -112,6 +122,7 @@
       "description": "Projektmanagement-Anwendung mit Kanban-Boards, Zeiterfassung und Teamzusammenarbeit.",
       "category": "Productivity",
       "image": "https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?w=800&q=80",
+      "previewImage": "https://i.postimg.cc/jjWH305h/2025-06-05-10-29-16.png",
       "demoUrl": "https://example-taskmanager.com",
       "githubUrl": "https://github.com/example/taskmanager",
       "technologies": ["Next.js", "TypeScript", "PostgreSQL", "Supabase"]
@@ -122,6 +133,7 @@
       "description": "Soziales Netzwerk mit Benutzerprofilen, News-Feed, Nachrichten und Empfehlungssystem.",
       "category": "Social",
       "image": "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&q=80",
+      "previewImage": "https://i.postimg.cc/jjWH305h/2025-06-05-10-29-16.png",
       "demoUrl": "https://example-social.com",
       "githubUrl": "https://github.com/example/social",
       "technologies": ["React", "GraphQL", "Node.js", "MongoDB"]
