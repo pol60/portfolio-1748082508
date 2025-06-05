@@ -1,14 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
+import projectImages from "../../public/projects/projectImages.json";
 
 export interface Project {
   id: number;
   title: string;
   description: string;
   category: string;
-  image: string;
-  previewImage?: string;
-  demoUrl: string;
-  githubUrl: string;
   technologies: string[];
 }
 
@@ -20,6 +17,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   const [isVisible, setIsVisible] = useState(false);
   const imageRef = useRef<HTMLDivElement>(null);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
+  const projectImage = projectImages[String(project.id) as keyof typeof projectImages];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -54,14 +52,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         className="relative h-[200px] flex-shrink-0 overflow-hidden"
       >
         <img
-          src={project.image}
+          src={projectImage.image}
           alt={project.title}
           className={`absolute inset-0 w-full h-full object-cover object-top transition-all duration-700 ${
             isVisible ? "opacity-0 scale-110" : "opacity-100 scale-100"
           }`}
         />
         <img
-          src={project.previewImage}
+          src={projectImage.previewImage}
           alt={`${project.title} preview`}
           className={`absolute inset-0 w-full h-full object-cover object-top transition-all duration-700 ${
             isVisible ? "opacity-100 scale-100" : "opacity-0 scale-110"
@@ -103,7 +101,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         </div>
         <div className="flex justify-between mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
           <a
-            href={project.demoUrl}
+            href={projectImage.demoUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-indigo-600 hover:text-indigo-800 dark:hover:text-indigo-400 font-medium cursor-pointer"
@@ -111,7 +109,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
             Демо <i className="fas fa-external-link-alt ml-1"></i>
           </a>
           <a
-            href={project.githubUrl}
+            href={projectImage.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-indigo-600 hover:text-indigo-800 dark:hover:text-indigo-400 font-medium cursor-pointer"
