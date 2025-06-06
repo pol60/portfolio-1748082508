@@ -5,14 +5,14 @@
       "title": "E-commerce платформа",
       "description": "Полнофункциональный интернет-магазин с каталогом товаров, корзиной, системой оплаты и панелью администратора.",
       "category": "E-commerce",
-      "technologies": ["React", "Node.js", "MongoDB", "Stripe"]
+      "technologies": ["React", "Node.js", "Supabase", "Stripe"]
     },
     {
       "id": 2,
-      "title": "Система управления задачами",
-      "description": "Приложение для управления проектами с канбан-досками, отслеживанием времени и совместной работой в команде.",
-      "category": "Productivity",
-      "technologies": ["Next.js", "TypeScript", "PostgreSQL", "Supabase"]
+      "title": "Современный сайт-визитка",
+      "description": "Элегантный и минималистичный сайт-визитка с современным дизайном, анимациями при прокрутке и адаптивной версткой. Включает портфолио работ, контактную информацию и интерактивные элементы.",
+      "category": "Business Card",
+      "technologies": ["Next.js", "TypeScript", "Tailwind CSS", "Framer"]
     },
     {
       "id": 3,
@@ -32,10 +32,10 @@
     },
     {
       "id": 2,
-      "title": "Task Management System",
-      "description": "Project management application with kanban boards, time tracking and team collaboration.",
-      "category": "Productivity",
-      "technologies": ["Next.js", "TypeScript", "PostgreSQL", "Supabase"]
+      "title": "Modern Business Card Website",
+      "description": "Elegant and minimalist business card website with modern design, scroll animations, and responsive layout. Features portfolio showcase, contact information, and interactive elements.",
+      "category": "Business Card",
+      "technologies": ["Next.js", "TypeScript", "Tailwind CSS", "Framer"]
     },
     {
       "id": 3,
@@ -55,10 +55,10 @@
     },
     {
       "id": 2,
-      "title": "Система управління завданнями",
-      "description": "Додаток для управління проектами з канбан-дошками, відстеженням часу та спільною роботою в команді.",
-      "category": "Productivity",
-      "technologies": ["Next.js", "TypeScript", "PostgreSQL", "Supabase"]
+      "title": "Сучасний сайт-візитка",
+      "description": "Елегантний та мінімалістичний сайт-візитка з сучасним дизайном, анімаціями при прокрутці та адаптивною версткою. Включає портфоліо робіт, контактну інформацію та інтерактивні елементи.",
+      "category": "Business Card",
+      "technologies": ["Next.js", "TypeScript", "Tailwind CSS", "Framer"]
     },
     {
       "id": 3,
@@ -78,10 +78,10 @@
     },
     {
       "id": 2,
-      "title": "Aufgabenverwaltungssystem",
-      "description": "Projektmanagement-Anwendung mit Kanban-Boards, Zeiterfassung und Teamzusammenarbeit.",
-      "category": "Productivity",
-      "technologies": ["Next.js", "TypeScript", "PostgreSQL", "Supabase"]
+      "title": "Moderne Visitenkarten-Website",
+      "description": "Elegante und minimalistische Visitenkarten-Website mit modernem Design, Scroll-Animationen und responsivem Layout. Enthält Portfolio-Präsentation, Kontaktinformationen und interaktive Elemente.",
+      "category": "Business Card",
+      "technologies": ["Next.js", "TypeScript", "Tailwind CSS", "Framer"]
     },
     {
       "id": 3,
