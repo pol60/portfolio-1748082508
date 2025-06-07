@@ -308,6 +308,7 @@
   font-size: 16px !important;
   -webkit-text-size-adjust: 100% !important;
   -webkit-appearance: none !important;
+  appearance: none !important;
 }
 
 /* --------------------------------------------------
@@ -377,9 +378,21 @@
 .chat-input-field,
 .chat-window input,
 .chat-window textarea {
-  color: #fff !important;
+  /* Цвета теперь определяются через Tailwind классы и темы, не переопределяем color! */
   background: rgba(255, 255, 255, 0.10) !important;
   border-radius: 8px !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  color: #1f2937; /* графитовый для светлой темы */
+}
+
+@media (prefers-color-scheme: dark) {
+  .chat-input-field,
+  .chat-window input,
+  .chat-window textarea {
+    color: #fff !important; /* белый для темной темы */
+    background: rgba(30, 41, 59, 0.7) !important; /* чуть темнее фон */
+  }
 }
 
 .chat-input-field {
