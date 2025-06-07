@@ -73,13 +73,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           </div>
         </div>
       </div>
-      <div className="p-6 flex flex-col flex-1">
+      <div className="p-6 flex flex-col h-[280px]">
         <div className="mb-4">
           <h3 className="text-xl font-bold text-gray-800 dark:text-white line-clamp-2">
             {project.title}
           </h3>
         </div>
-        <div className="mb-4 flex-1">
+        <div className="mb-4">
           <p 
             ref={descriptionRef}
             className="text-gray-600 dark:text-gray-300 line-clamp-3"
@@ -99,24 +99,24 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
             ))}
           </div>
         </div>
-        <div className="flex justify-between mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
-          <a
-            href={projectImage.demoUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-indigo-600 hover:text-indigo-800 dark:hover:text-indigo-400 font-medium cursor-pointer"
-          >
-            Демо <i className="fas fa-external-link-alt ml-1"></i>
-          </a>
-          <a
-            href={projectImage.githubUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-indigo-600 hover:text-indigo-800 dark:hover:text-indigo-400 font-medium cursor-pointer"
-          >
-            GitHub <i className="fab fa-github ml-1"></i>
-          </a>
-        </div>
+      </div>
+      <div className="flex justify-between p-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <a
+          href={projectImage.demoUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-indigo-600 hover:text-indigo-800 dark:hover:text-indigo-400 font-medium cursor-pointer"
+        >
+          Демо <i className="fas fa-external-link-alt ml-1"></i>
+        </a>
+        <a
+          href={projectImage.githubUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-indigo-600 hover:text-indigo-800 dark:hover:text-indigo-400 font-medium cursor-pointer"
+        >
+          GitHub <i className="fab fa-github ml-1"></i>
+        </a>
       </div>
     </div>
   );
