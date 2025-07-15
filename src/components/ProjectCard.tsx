@@ -60,16 +60,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDemoClick, disable
         <img
           src={projectImage.image}
           alt={project.title}
-          className={`absolute inset-0 w-full h-full object-cover object-top transition-all duration-700 ${
+          className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${
             (!disableAnimation && isVisible) ? "opacity-0 scale-110" : "opacity-100 scale-100"
-          }`}
+          } ${project.id === 4 ? "object-top" : "object-top"}`}
+          style={project.id === 4 ? { objectPosition: 'center 20%' } : undefined}
         />
         <img
           src={projectImage.previewImage}
           alt={`${project.title} preview`}
-          className={`absolute inset-0 w-full h-full object-cover object-top transition-all duration-700 ${
+          className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${
             (!disableAnimation && isVisible) ? "opacity-100 scale-100" : "opacity-0 scale-110"
-          }`}
+          } ${project.id === 4 ? "object-top" : "object-top"}`}
+          style={project.id === 4 ? { objectPosition: 'center 20%' } : undefined}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
           <div className="p-6">
