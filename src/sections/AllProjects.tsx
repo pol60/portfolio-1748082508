@@ -2,15 +2,14 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import ProjectCard from "../components/ProjectCard";
 import { useProjects } from "../hooks/useProjects";
-import { Link } from "react-router-dom";
 
-const Projects: React.FC = () => {
+const AllProjects: React.FC = () => {
   const { t } = useTranslation();
   const { projects, loading, error } = useProjects();
   const [showTapChanceModal, setShowTapChanceModal] = useState(false);
 
   return (
-    <section id="projects" className="py-20 min-h-screen flex items-center">
+    <section className="py-20 min-h-screen flex items-center bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -23,13 +22,11 @@ const Projects: React.FC = () => {
             {t("projects.description")}
           </p>
         </div>
-
         {loading && (
           <div className="flex justify-center items-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
           </div>
         )}
-
         {error && (
           <div className="text-center py-10">
             <div className="text-red-500 mb-4">
@@ -40,7 +37,6 @@ const Projects: React.FC = () => {
             </p>
           </div>
         )}
-
         {!loading && !error && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-8">
             {projects.map((project) => (
@@ -53,15 +49,6 @@ const Projects: React.FC = () => {
             ))}
           </div>
         )}
-
-        <div className="text-center mt-12">
-          <Link
-            to="/projects"
-            className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-indigo-500/50 !rounded-button whitespace-nowrap cursor-pointer inline-block"
-          >
-            {t("projects.view_all")} <i className="fas fa-arrow-right ml-2"></i>
-          </Link>
-        </div>
       </div>
       {/* Модалка Tap Chance вне карточки */}
       {showTapChanceModal && (
@@ -97,4 +84,4 @@ const Projects: React.FC = () => {
   );
 };
 
-export default Projects;
+export default AllProjects; 

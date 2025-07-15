@@ -11,15 +11,21 @@ export interface Project {
 
 interface ProjectCardProps {
   project: Project;
+  onDemoClick?: () => void;
+  disableAnimation?: boolean;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDemoClick, disableAnimation }) => {
   const [isVisible, setIsVisible] = useState(false);
   const imageRef = useRef<HTMLDivElement>(null);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const projectImage = projectImages[String(project.id) as keyof typeof projectImages];
 
   useEffect(() => {
+    if (disableAnimation) {
+      setIsVisible(false);
+      return;
+    }
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -43,7 +49,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         observer.unobserve(descriptionRef.current);
       }
     };
-  }, []);
+  }, [disableAnimation]);
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:transform hover:scale-105 flex flex-col h-[480px]">
@@ -55,14 +61,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           src={projectImage.image}
           alt={project.title}
           className={`absolute inset-0 w-full h-full object-cover object-top transition-all duration-700 ${
-            isVisible ? "opacity-0 scale-110" : "opacity-100 scale-100"
+            (!disableAnimation && isVisible) ? "opacity-0 scale-110" : "opacity-100 scale-100"
           }`}
         />
         <img
           src={projectImage.previewImage}
           alt={`${project.title} preview`}
           className={`absolute inset-0 w-full h-full object-cover object-top transition-all duration-700 ${
-            isVisible ? "opacity-100 scale-100" : "opacity-0 scale-110"
+            (!disableAnimation && isVisible) ? "opacity-100 scale-100" : "opacity-0 scale-110"
           }`}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
@@ -100,14 +106,23 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           </div>
         </div>
         <div className="flex justify-between  p-4 border-t border-gray-200 dark:border-gray-700 h-[20px]">
-          <a
-            href={projectImage.demoUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-indigo-600 hover:text-indigo-800 dark:hover:text-indigo-400 font-medium cursor-pointer"
-          >
-            Демо <i className="fas fa-external-link-alt ml-1"></i>
-          </a>
+          {project.id === 4 ? (
+            <button
+              onClick={onDemoClick}
+              className="text-indigo-600 hover:text-indigo-800 dark:hover:text-indigo-400 font-medium cursor-pointer bg-transparent border-none p-0 m-0"
+            >
+              Демо <i className="fas fa-external-link-alt ml-1"></i>
+            </button>
+          ) : (
+            <a
+              href={projectImage.demoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-indigo-600 hover:text-indigo-800 dark:hover:text-indigo-400 font-medium cursor-pointer"
+            >
+              Демо <i className="fas fa-external-link-alt ml-1"></i>
+            </a>
+          )}
           <a
             href={projectImage.githubUrl}
             target="_blank"

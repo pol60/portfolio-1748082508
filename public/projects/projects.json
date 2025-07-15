@@ -20,6 +20,13 @@
       "description": "Современный одностраничный сайт с адаптивным дизайном, анимациями и оптимизированной производительностью.",
       "category": "Landing",
       "technologies": ["React", "GraphQL", "Node.js", "MongoDB"]
+    },
+    {
+      "id": 4,
+      "title": "Tap Chance — Telegram Mini-Game",
+      "description": "Мини-игра для Telegram на TON: соревнуйтесь в комнатах, оплачивайте участие через TON, результаты хранятся в PostgreSQL. Современная сборка на Vite, React 18, Node.js (TypeScript).",
+      "category": "Game / Telegram Mini App",
+      "technologies": ["React 18", "Vite", "Node.js", "TypeScript", "PostgreSQL", "TON", "Telegram Mini Apps"]
     }
   ],
   "en": [
@@ -43,6 +50,13 @@
       "description": "Modern single-page website with responsive design, animations and optimized performance.",
       "category": "Landing",
       "technologies": ["React", "GraphQL", "Node.js", "MongoDB"]
+    },
+    {
+      "id": 4,
+      "title": "Tap Chance — Telegram Mini-Game",
+      "description": "A mini-game for Telegram on TON: compete in rooms, pay entry via TON, results stored in PostgreSQL. Modern stack: Vite, React 18, Node.js (TypeScript).",
+      "category": "Game / Telegram Mini App",
+      "technologies": ["React 18", "Vite", "Node.js", "TypeScript", "PostgreSQL", "TON", "Telegram Mini Apps"]
     }
   ],
   "uk": [
@@ -66,6 +80,13 @@
       "description": "Сучасний односторінковий сайт з адаптивним дизайном, анімаціями та оптимізованою продуктивністю.",
       "category": "Landing",
       "technologies": ["React", "GraphQL", "Node.js", "MongoDB"]
+    },
+    {
+      "id": 4,
+      "title": "Tap Chance — Telegram Mini-Game",
+      "description": "Міні-гра для Telegram на TON: змагайтеся в кімнатах, сплачуйте участь через TON, результати зберігаються в PostgreSQL. Сучасний стек: Vite, React 18, Node.js (TypeScript).",
+      "category": "Game / Telegram Mini App",
+      "technologies": ["React 18", "Vite", "Node.js", "TypeScript", "PostgreSQL", "TON", "Telegram Mini Apps"]
     }
   ],
   "de": [
@@ -89,6 +110,13 @@
       "description": "Moderne Einzelseiten-Website mit responsivem Design, Animationen und optimierter Leistung.",
       "category": "Landing",
       "technologies": ["React", "GraphQL", "Node.js", "MongoDB"]
+    },
+    {
+      "id": 4,
+      "title": "Tap Chance — Telegram Mini-Game",
+      "description": "Mini-Spiel für Telegram auf TON: Trete in Räumen an, bezahle die Teilnahme über TON, Ergebnisse werden in PostgreSQL gespeichert. Moderner Stack: Vite, React 18, Node.js (TypeScript).",
+      "category": "Game / Telegram Mini App",
+      "technologies": ["React 18", "Vite", "Node.js", "TypeScript", "PostgreSQL", "TON", "Telegram Mini Apps"]
     }
   ]
 }

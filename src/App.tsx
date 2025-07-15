@@ -5,6 +5,7 @@ import ScrollProgress from "./components/ScrollProgress";
 import Chat from "./components/Chat";
 import { useWebSocketConnection } from "./hooks/useWebSocketConnection";
 import "./styles.css";
+import { Outlet } from "react-router-dom";
 
 // Импорт секций
 import Home from "./sections/Home";
@@ -77,14 +78,16 @@ const App: React.FC = () => {
 
       <MobileMenu isMenuOpen={isMenuOpen} scrollToSection={scrollToSection} />
 
-      <Home scrollToSection={scrollToSection} />
+      <Outlet />
+      {/* Основные секции отображаются только на главной странице */}
+      {/* <Home scrollToSection={scrollToSection} />
       <About />
       <Skills
         skillChartRef={skillChartRef}
         experienceChartRef={experienceChartRef}
       />
       <Projects />
-      <Contact />
+      <Contact /> */}
 
       {/* Глобальный чат с фоновым WebSocket подключением */}
       <Chat

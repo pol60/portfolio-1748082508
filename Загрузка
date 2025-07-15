@@ -3,11 +3,18 @@ ngrok http 3000
 ssh -R 80:localhost:3000 nokey@localhost.run
 
 
+
+npx drizzle-kit push
+
+
+
 rm -rf .git
 
 npm run dev
 
 npm run dev:bot
+
+npm run db:push ----------приминение миграции 
 
 node --no-deprecation server/bot.js
 
@@ -26,6 +33,22 @@ cloudflared tunnel
 
 открыть тунель cloudflare
 cloudflared tunnel --url http://localhost:5173
+
+
+Удаление 
+
+DELETE FROM games
+WHERE winner_id = 'bf815242-67ca-4eb8-ad1f-3fa5b48cf9f3';
+
+DELETE FROM rooms
+WHERE creator_id = 'bf815242-67ca-4eb8-ad1f-3fa5b48cf9f3';
+
+DELETE FROM users
+WHERE id = 'bf815242-67ca-4eb8-ad1f-3fa5b48cf9f3';
+
+UPDATE users 
+SET balance_stars = 1000 
+WHERE id = 'f294f806-04af-45e4-9f1e-682ed08d1fd9';
 
 
 
