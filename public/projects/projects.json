@@ -27,6 +27,13 @@
       "description": "Мини-игра для Telegram на TON: соревнуйтесь в комнатах, оплачивайте участие через TON, результаты хранятся в PostgreSQL. Современная сборка на Vite, React 18, Node.js (TypeScript).",
       "category": "Game / Telegram Mini App",
       "technologies": ["React 18", "Vite", "Node.js", "TypeScript", "PostgreSQL", "TON", "Telegram Mini Apps"]
+    },
+    {
+      "id": 5,
+      "title": "Погода на карте",
+      "description": "Веб-приложение, позволяющее кликать по карте и мгновенно получать текущую погоду в любой точке мира. Построено на Next.js, React и Leaflet, использует OpenWeatherMap для данных о погоде и Nominatim OpenStreetMap для обратного геокодирования.",
+      "category": "Web App",
+      "technologies": ["Next.js", "React", "Leaflet", "OpenWeatherMap API", "OpenStreetMap Nominatim"]
     }
   ],
   "en": [
@@ -57,6 +64,13 @@
       "description": "A mini-game for Telegram on TON: compete in rooms, pay entry via TON, results stored in PostgreSQL. Modern stack: Vite, React 18, Node.js (TypeScript).",
       "category": "Game / Telegram Mini App",
       "technologies": ["React 18", "Vite", "Node.js", "TypeScript", "PostgreSQL", "TON", "Telegram Mini Apps"]
+    },
+    {
+      "id": 5,
+      "title": "Weather on the Map",
+      "description": "A web application that allows users to click on a map and instantly get the current weather for any location. Built with Next.js, React, and Leaflet, it uses OpenWeatherMap for weather data and OpenStreetMap Nominatim for reverse geocoding.",
+      "category": "Web App",
+      "technologies": ["Next.js", "React", "Leaflet", "OpenWeatherMap API", "OpenStreetMap Nominatim"]
     }
   ],
   "uk": [
@@ -87,6 +101,13 @@
       "description": "Міні-гра для Telegram на TON: змагайтеся в кімнатах, сплачуйте участь через TON, результати зберігаються в PostgreSQL. Сучасний стек: Vite, React 18, Node.js (TypeScript).",
       "category": "Game / Telegram Mini App",
       "technologies": ["React 18", "Vite", "Node.js", "TypeScript", "PostgreSQL", "TON", "Telegram Mini Apps"]
+    },
+    {
+      "id": 5,
+      "title": "Погода на карті",
+      "description": "Веб-додаток, що дозволяє клікати по карті та миттєво отримувати поточну погоду в будь-якій точці світу. Створено на Next.js, React і Leaflet, використовує OpenWeatherMap для даних про погоду та Nominatim OpenStreetMap для зворотного геокодування.",
+      "category": "Web App",
+      "technologies": ["Next.js", "React", "Leaflet", "OpenWeatherMap API", "OpenStreetMap Nominatim"]
     }
   ],
   "de": [
@@ -117,6 +138,13 @@
       "description": "Mini-Spiel für Telegram auf TON: Trete in Räumen an, bezahle die Teilnahme über TON, Ergebnisse werden in PostgreSQL gespeichert. Moderner Stack: Vite, React 18, Node.js (TypeScript).",
       "category": "Game / Telegram Mini App",
       "technologies": ["React 18", "Vite", "Node.js", "TypeScript", "PostgreSQL", "TON", "Telegram Mini Apps"]
+    },
+    {
+      "id": 5,
+      "title": "Wetter auf der Karte",
+      "description": "Eine Webanwendung, mit der Benutzer auf eine Karte klicken und sofort das aktuelle Wetter für jeden Ort erhalten können. Erstellt mit Next.js, React und Leaflet, verwendet OpenWeatherMap für Wetterdaten und OpenStreetMap Nominatim für Reverse Geocoding.",
+      "category": "Web App",
+      "technologies": ["Next.js", "React", "Leaflet", "OpenWeatherMap API", "OpenStreetMap Nominatim"]
     }
   ]
 }
