@@ -96,10 +96,10 @@ const Contact: React.FC = () => {
                       {t("contact.email")}
                     </h4>
                     <a
-                      href="mailto:contact@example.com"
+                      href="mailto:pol60g54@gmail.com"
                       className="text-indigo-600 hover:text-indigo-800 dark:hover:text-indigo-400"
                     >
-                      contact@example.com
+                      pol60g54@gmail.com
                     </a>
                   </div>
                 </div>
@@ -113,7 +113,7 @@ const Contact: React.FC = () => {
                       {t("contact.phone")}
                     </h4>
                     <a
-                      href="tel:+71234567890"
+                      href="tel:+380930759403"
                       className="text-indigo-600 hover:text-indigo-800 dark:hover:text-indigo-400"
                     >
                       +380 (93) 075-9403
