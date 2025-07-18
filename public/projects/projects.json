@@ -34,6 +34,16 @@
       "description": "Веб-приложение, позволяющее кликать по карте и мгновенно получать текущую погоду в любой точке мира. Построено на Next.js, React и Leaflet, использует OpenWeatherMap для данных о погоде и Nominatim OpenStreetMap для обратного геокодирования.",
       "category": "Web App",
       "technologies": ["Next.js", "React", "Leaflet", "OpenWeatherMap API", "OpenStreetMap Nominatim"]
+    },
+    {
+      "id": 6,
+      "title": "Система бронирования",
+      "description": "Веб-приложение для управления бронированием, расписаниями и категориями с административной панелью и аналитикой. Подходит для спортивных клубов, студий, образовательных центров и других организаций, где требуется онлайн-бронирование и управление расписаниями.",
+      "category": "Web App",
+      "technologies": [
+        "React", "TypeScript", "Vite", "Tailwind CSS", "Storybook",
+        "Node.js", "Express", "JWT", "PostgreSQL", "SMTP", "Stripe"
+      ]
     }
   ],
   "en": [
@@ -71,6 +81,16 @@
       "description": "A web application that allows users to click on a map and instantly get the current weather for any location. Built with Next.js, React, and Leaflet, it uses OpenWeatherMap for weather data and OpenStreetMap Nominatim for reverse geocoding.",
       "category": "Web App",
       "technologies": ["Next.js", "React", "Leaflet", "OpenWeatherMap API", "OpenStreetMap Nominatim"]
+    },
+    {
+      "id": 6,
+      "title": "Booking System",
+      "description": "A web application for managing bookings, schedules, and categories with an admin panel and analytics. Suitable for sports clubs, studios, educational centers, and other organizations that require online booking and schedule management.",
+      "category": "Web App",
+      "technologies": [
+        "React", "TypeScript", "Vite", "Tailwind CSS", "Storybook",
+        "Node.js", "Express", "JWT", "PostgreSQL", "SMTP", "Stripe"
+      ]
     }
   ],
   "uk": [
@@ -108,6 +128,16 @@
       "description": "Веб-додаток, що дозволяє клікати по карті та миттєво отримувати поточну погоду в будь-якій точці світу. Створено на Next.js, React і Leaflet, використовує OpenWeatherMap для даних про погоду та Nominatim OpenStreetMap для зворотного геокодування.",
       "category": "Web App",
       "technologies": ["Next.js", "React", "Leaflet", "OpenWeatherMap API", "OpenStreetMap Nominatim"]
+    },
+    {
+      "id": 6,
+      "title": "Система бронювання",
+      "description": "Веб-додаток для управління бронюваннями, розкладами та категоріями з адміністративною панеллю та аналітикою. Підходить для спортивних клубів, студій, освітніх центрів та інших організацій, де потрібне онлайн-бронювання та керування розкладом.",
+      "category": "Web App",
+      "technologies": [
+        "React", "TypeScript", "Vite", "Tailwind CSS", "Storybook",
+        "Node.js", "Express", "JWT", "PostgreSQL", "SMTP", "Stripe"
+      ]
     }
   ],
   "de": [
@@ -145,6 +175,16 @@
       "description": "Eine Webanwendung, mit der Benutzer auf eine Karte klicken und sofort das aktuelle Wetter für jeden Ort erhalten können. Erstellt mit Next.js, React und Leaflet, verwendet OpenWeatherMap für Wetterdaten und OpenStreetMap Nominatim für Reverse Geocoding.",
       "category": "Web App",
       "technologies": ["Next.js", "React", "Leaflet", "OpenWeatherMap API", "OpenStreetMap Nominatim"]
+    },
+    {
+      "id": 6,
+      "title": "Buchungssystem",
+      "description": "Eine Webanwendung zur Verwaltung von Buchungen, Zeitplänen und Kategorien mit Admin-Panel und Analytik. Geeignet für Sportvereine, Studios, Bildungszentren und andere Organisationen, die Online-Buchung und Zeitplanverwaltung benötigen.",
+      "category": "Web App",
+      "technologies": [
+        "React", "TypeScript", "Vite", "Tailwind CSS", "Storybook",
+        "Node.js", "Express", "JWT", "PostgreSQL", "SMTP", "Stripe"
+      ]
     }
   ]
 }
